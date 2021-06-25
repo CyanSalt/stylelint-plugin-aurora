@@ -1,0 +1,13 @@
+{
+  "extends": "@cyansalt/tsconfig/tsconfig.base",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "dist",
+    "module": "CommonJS"
+  },
+  "exclude": [
+    "**/dist",
+    "**/node_modules",
+    "**/tests"
+  ]
+}
