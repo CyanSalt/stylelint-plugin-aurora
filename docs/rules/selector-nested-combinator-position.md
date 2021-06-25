@@ -8,7 +8,7 @@ This rule is fixable.
 
 ## Fail
 
-```js
+```scss
 .foo > {
   .bar {
     display: block;
@@ -16,7 +16,7 @@ This rule is fixable.
 }
 ```
 
-```js
+```scss
 /* stylelint aurora/selector-nested-combinator-position: ["as-prefix", { "includes": ["::v-deep"] }]*/
 .foo ::v-deep {
   .bar {
@@ -27,13 +27,13 @@ This rule is fixable.
 
 ## Pass
 
-```js
+```scss
 .foo > .bar {
   display: block;
 }
 ```
 
-```js
+```scss
 .foo {
   > .bar {
     display: block;
@@ -41,7 +41,7 @@ This rule is fixable.
 }
 ```
 
-```js
+```scss
 .foo {
   & > .bar {
     display: block;
