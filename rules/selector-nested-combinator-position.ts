@@ -40,7 +40,10 @@ export default createPlugin(ruleName, (expectation, options: any, context) => {
           if (context.fix) {
             rule.each(child => {
               if (child.type === 'rule') {
-                child.selector = `${detectedCombinator} ${child.selector}`;
+                child.selector = child.selector
+                  .split(',')
+                  .map(selector => selector.replace(/(\S)/, `${detectedCombinator} $1`))
+                  .join(',');
               }
             });
             const selector = rule.selector.slice(0, -detectedCombinator.length).trim();
