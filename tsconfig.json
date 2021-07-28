@@ -2,12 +2,14 @@
   "extends": "@cyansalt/tsconfig/tsconfig.base",
   "compilerOptions": {
     "noEmit": false,
+    "rootDir": "src",
     "outDir": "dist",
     "module": "CommonJS"
   },
   "exclude": [
     "**/dist",
     "**/node_modules",
-    "**/tests"
+    "**/tests",
+    "jest.config.js"
   ]
 }
