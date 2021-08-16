@@ -1,4 +1,4 @@
-# Enforce the position of combinators in nesting
+# Enforce the position of combinators in nesting (`selector-nested-combinator-position`)
 
 Using combinators improperly in nesting not only makes the code difficult to read, but also prone to bugs. For example, `.foo > { display: block }` will compile in an unintended style.
 
