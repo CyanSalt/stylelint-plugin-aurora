@@ -7,7 +7,6 @@ export const messages = utils.ruleMessages(ruleName, {
   expected: (combinator) => `Expected combinator "${combinator}" to be in the nested form`,
 });
 
-// @ts-expect-error bad typings in @types/stylelint
 export default createPlugin(ruleName, (expectation, options: any, context) => {
   return (root, result) => {
     const validOptions = utils.validateOptions(
@@ -49,11 +48,12 @@ export default createPlugin(ruleName, (expectation, options: any, context) => {
             const selector = rule.selector.slice(0, -detectedCombinator.length).trim();
             if (selector && selector !== '&') {
               rule.selector = selector;
-            } else {
+            } else if (rule.parent) {
+              const parent = rule.parent
               rule.each(child => {
-                rule.parent.insertBefore(rule, child);
+                parent.insertBefore(rule, child);
               });
-              rule.parent.removeChild(rule);
+              parent.removeChild(rule);
             }
             return;
           }
