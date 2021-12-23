@@ -1,8 +1,8 @@
-import * as path from 'path';
-import getTestRule from 'jest-preset-stylelint/getTestRule';
-import { messages, ruleName } from '../../src/rules/selector-nested-combinator-position';
+import * as path from 'path'
+import getTestRule from 'jest-preset-stylelint/getTestRule'
+import { messages, ruleName } from '../../src/rules/selector-nested-combinator-position'
 
-const testRule = getTestRule();
+const testRule = getTestRule()
 
 testRule({
   plugins: [path.resolve(__dirname, '../../src/rules/selector-nested-combinator-position.ts')],
@@ -37,4 +37,4 @@ testRule({
       message: messages.expected('>'),
     },
   ],
-});
+})
