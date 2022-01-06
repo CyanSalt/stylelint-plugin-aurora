@@ -17,7 +17,7 @@ This rule is fixable.
 ```
 
 ```scss
-/* stylelint aurora/selector-nested-combinator-position: ["as-prefix", { "includes": ["::v-deep"] }]*/
+/* stylelint aurora/selector-nested-combinator-position: ["as-prefix", { "includes": ["::v-deep"] }] */
 .foo ::v-deep {
   .bar {
     display: block;
