@@ -24,6 +24,6 @@ module.exports = {
 
 ## Rules
 
-- [selector-nested-combinator-position](./docs/rules/selector-nested-combinator-position.md) - Enforce the position of combinators in nesting 🔧
+- [`selector-nested-combinator-position`](./docs/rules/selector-nested-combinator-position.md) - Enforce the position of combinators in nesting 🔧
 
 *🔧 means that the rule could be fixed automatically*.
