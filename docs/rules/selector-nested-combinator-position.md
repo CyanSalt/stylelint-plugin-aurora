@@ -6,6 +6,12 @@ Set the first parameter of the rule to `as-prefix` to disallow combinators at th
 
 This rule is fixable.
 
+## Options
+
+This rule has an object option:
+
+- `"includes"` declares extra combinators
+
 ## Fail
 
 ```scss
