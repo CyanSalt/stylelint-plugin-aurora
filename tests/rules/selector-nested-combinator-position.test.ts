@@ -38,3 +38,42 @@ testRule({
     },
   ],
 })
+
+testRule({
+  plugins: [path.resolve(__dirname, '../../src/rules/selector-nested-combinator-position.ts')],
+  ruleName,
+  config: ['as-prefix', { includes: ['::v-deep'] }],
+  fix: true,
+  accept: [
+    {
+      code: '.foo ::v-deep .bar {}',
+      description: 'selector in one line',
+    },
+  ],
+  reject: [
+    {
+      code: '.foo ::v-deep { .bar {} }',
+      description: 'trailing combinator',
+      fixed: '.foo { ::v-deep .bar {} }',
+      message: messages.expected('::v-deep'),
+    },
+  ],
+})
+
+testRule({
+  plugins: [path.resolve(__dirname, '../../src/rules/selector-nested-combinator-position.ts')],
+  ruleName,
+  config: ['invalid option'],
+  fix: true,
+  accept: [
+    {
+      code: '.foo > .bar {}',
+      description: 'selector in one line',
+    },
+    {
+      code: '.foo { > .bar {} }',
+      description: 'trailing combinator',
+    },
+  ],
+  reject: [],
+})
