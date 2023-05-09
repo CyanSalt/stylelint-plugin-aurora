@@ -1,5 +1,7 @@
 # stylelint-plugin-aurora
 
+[![npm](https://img.shields.io/npm/v/stylelint-plugin-aurora.svg)](https://www.npmjs.com/package/stylelint-plugin-aurora)
+
 Various Stylelint rules in one plugin.
 
 ## Installation
