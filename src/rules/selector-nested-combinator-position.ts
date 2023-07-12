@@ -4,10 +4,14 @@ import { getRuleName } from '../utils'
 export const ruleName = getRuleName(__filename)
 
 export const messages = utils.ruleMessages(ruleName, {
-  expected: (combinator) => `Expected combinator "${combinator}" to be in the nested form`,
+  expected: (combinator: string) => `Expected combinator "${combinator}" to be in the nested form`,
 })
 
-export default createPlugin(ruleName, (expectation, options: any, context) => {
+export default createPlugin(ruleName, (
+  expectation: 'as-prefix' | (string & {}),
+  options: { includes?: string[] } | undefined,
+  context,
+) => {
   return (root, result) => {
     const validOptions = utils.validateOptions(
       result,
