@@ -1,3 +1,10 @@
+### [1.0.4](https://github.com/CyanSalt/stylelint-plugin-aurora/compare/v1.0.3...v1.0.4) (2023-11-10)
+
+
+### Bug Fixes
+
+* rule types ([2febd8b](https://github.com/CyanSalt/stylelint-plugin-aurora/commit/2febd8b095353321bb55d531415ac21aeaf10d2b))
+
 ### [1.0.3](https://github.com/CyanSalt/stylelint-plugin-aurora/compare/v1.0.2...v1.0.3) (2021-10-27)
 
 
