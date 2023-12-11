@@ -1,3 +1,4 @@
+import type { Rule } from 'stylelint'
 import { createPlugin, utils } from 'stylelint'
 import { getRuleName } from '../utils'
 
@@ -7,7 +8,7 @@ export const messages = utils.ruleMessages(ruleName, {
   expected: (combinator: string) => `Expected combinator "${combinator}" to be in the nested form`,
 })
 
-export default createPlugin(ruleName, (
+const ruleImplementation: Rule = (
   expectation: 'as-prefix' | (string & {}),
   options: { includes?: string[] } | undefined,
   context,
@@ -71,4 +72,9 @@ export default createPlugin(ruleName, (
       }
     })
   }
-})
+}
+
+ruleImplementation.ruleName = getRuleName(__filename)
+ruleImplementation.messages = messages
+
+export default createPlugin(ruleName, ruleImplementation)
