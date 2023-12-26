@@ -74,7 +74,7 @@ const ruleImplementation: Rule = (
   }
 }
 
-ruleImplementation.ruleName = getRuleName(__filename)
+ruleImplementation.ruleName = ruleName
 ruleImplementation.messages = messages
 
 export default createPlugin(ruleName, ruleImplementation)
