@@ -1,10 +1,16 @@
 import type { Rule } from 'stylelint'
-import { createPlugin, utils } from 'stylelint'
-import { getRuleName } from '../utils'
+import stylelint from 'stylelint'
+import { getRuleMeta, getRuleName } from '../utils.js'
 
-export const ruleName = getRuleName(__filename)
+const {
+  createPlugin,
+  utils: { report, ruleMessages, validateOptions },
+} = stylelint
 
-export const messages = utils.ruleMessages(ruleName, {
+export const ruleName = getRuleName(import.meta.url)
+export const meta = getRuleMeta(import.meta.url)
+
+export const messages = ruleMessages(ruleName, {
   expected: (combinator: string) => `Expected combinator "${combinator}" to be in the nested form`,
 })
 
@@ -14,7 +20,7 @@ const ruleImplementation: Rule = (
   context,
 ) => {
   return (root, result) => {
-    const validOptions = utils.validateOptions(
+    const validOptions = validateOptions(
       result,
       ruleName,
       {
@@ -62,7 +68,7 @@ const ruleImplementation: Rule = (
             }
             return
           }
-          utils.report({
+          report({
             ruleName,
             result,
             node: rule,
@@ -76,5 +82,6 @@ const ruleImplementation: Rule = (
 
 ruleImplementation.ruleName = ruleName
 ruleImplementation.messages = messages
+ruleImplementation.meta = meta
 
 export default createPlugin(ruleName, ruleImplementation)

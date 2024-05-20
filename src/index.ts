@@ -1,15 +1,5 @@
-import * as fs from 'fs'
-import * as path from 'path'
+import selectorNestedCombinatorPosition from './rules/selector-nested-combinator-position.js'
 
-function importDefault(obj: any) {
-  return obj?.__esModule ? obj.default : obj
-}
-
-function loadRules(dir: string) {
-  return fs.readdirSync(dir)
-    .map(rule => importDefault(require(path.join(dir, rule))))
-}
-
-const rules = loadRules(path.join(__dirname, 'rules'))
-
-export default rules
+export default [
+  selectorNestedCombinatorPosition,
+]
