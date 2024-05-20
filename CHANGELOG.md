@@ -1,3 +1,21 @@
+
+
+## [2.0.0](https://github.com/CyanSalt/stylelint-plugin-aurora/compare/v1.0.4...v2.0.0) (2024-05-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* support stylelint@16
+
+### Features
+
+* support stylelint@16 ([927d117](https://github.com/CyanSalt/stylelint-plugin-aurora/commit/927d11767a98bd9dcb16f49cf0778de0d69e5df6))
+
+
+### Bug Fixes
+
+* stylelint types ([e0ea514](https://github.com/CyanSalt/stylelint-plugin-aurora/commit/e0ea514d4ee7ee46bddb36d19ce072d33b13863a))
+
 ### [1.0.4](https://github.com/CyanSalt/stylelint-plugin-aurora/compare/v1.0.3...v1.0.4) (2023-11-10)
 
 
@@ -27,4 +45,3 @@
 ### Features
 
 * init ([435cdb1](https://github.com/CyanSalt/stylelint-plugin-aurora/commit/435cdb1f42d3c25133cde03b55c48d835d03a044))
-

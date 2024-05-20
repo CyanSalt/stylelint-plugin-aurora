@@ -1,6 +1,6 @@
 {
   "name": "stylelint-plugin-aurora",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "description": "Various Stylelint rules in one plugin.",
   "files": [
     "dist",
