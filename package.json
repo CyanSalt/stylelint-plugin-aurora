@@ -16,7 +16,7 @@
     "release": "release-it",
     "lint": "eslint --fix './**/*.{js,mjs,ts}'",
     "prepack": "unbuild",
-    "test": "tsx --test"
+    "test": "vitest"
   },
   "repository": {
     "type": "git",
@@ -42,9 +42,10 @@
     "release-it": "^17.0.0",
     "stylelint": "^16.5.0",
     "stylelint-test-rule-node": "^0.3.0",
-    "tsx": "^4.19.2",
+    "stylelint-test-rule-vitest": "^0.1.1",
     "typescript": "^5.3.3",
-    "unbuild": "^3.2.0"
+    "unbuild": "^3.2.0",
+    "vitest": "^2.1.8"
   },
   "peerDependencies": {
     "stylelint": ">=16.0.0"

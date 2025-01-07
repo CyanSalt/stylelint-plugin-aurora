@@ -1,9 +1,8 @@
-import { testRule } from 'stylelint-test-rule-node'
-import { messages, ruleName } from '../../src/rules/selector-nested-combinator-position'
-import { getPlugin } from '../utils'
+import { testRule } from 'stylelint-test-rule-vitest'
+import plugin, { messages, ruleName } from '../../src/rules/selector-nested-combinator-position'
 
 testRule({
-  plugins: [getPlugin('selector-nested-combinator-position')],
+  plugins: [plugin],
   ruleName,
   config: ['as-prefix'],
   fix: true,
@@ -38,7 +37,7 @@ testRule({
 })
 
 testRule({
-  plugins: [getPlugin('selector-nested-combinator-position')],
+  plugins: [plugin],
   ruleName,
   config: ['as-prefix', { includes: ['::v-deep'] }],
   fix: true,
