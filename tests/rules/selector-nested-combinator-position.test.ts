@@ -1,8 +1,6 @@
-import getTestRule from 'jest-preset-stylelint/getTestRule'
+import { testRule } from 'stylelint-test-rule-node'
 import { messages, ruleName } from '../../src/rules/selector-nested-combinator-position'
 import { getPlugin } from '../utils'
-
-const testRule = getTestRule()
 
 testRule({
   plugins: [getPlugin('selector-nested-combinator-position')],
