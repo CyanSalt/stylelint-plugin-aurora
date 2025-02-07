@@ -14,7 +14,7 @@ npm install --save-dev eslint-plugin-aurora
 
 ```js
 // stylelint.config.js
-module.exports = {
+export default {
   plugins: [
     'stylelint-plugin-aurora',
   ],
@@ -25,6 +25,8 @@ module.exports = {
 ```
 
 ## Rules
+
+- [`declaration-property-value-no-magic`](./docs/rules/declaration-property-value-no-magic.md) - Disallow magic values in declaration properties 🔧
 
 - [`selector-nested-combinator-position`](./docs/rules/selector-nested-combinator-position.md) - Enforce the position of combinators in nesting 🔧
 
