@@ -5,7 +5,9 @@ testRule({
   plugins: [plugin],
   ruleName,
   config: [true, {
-    bold: 'bolder',
+    values: {
+      bold: 'bolder',
+    },
   }],
   fix: true,
   accept: [
@@ -36,9 +38,11 @@ testRule({
   plugins: [plugin],
   ruleName,
   config: [true, {
-    '#FF0000': {
-      syntax: '<color>',
-      replacement: 'black',
+    values: {
+      '#FF0000': {
+        syntax: '<color>',
+        replacement: 'black',
+      },
     },
   }],
   fix: true,
@@ -72,9 +76,11 @@ testRule({
   plugins: [plugin],
   ruleName,
   config: [true, {
-    '#FF0000': {
-      syntax: '<color>',
-      replacement: 'rgb(255, 0, 0)',
+    values: {
+      '#FF0000': {
+        syntax: '<color>',
+        replacement: 'rgb(255, 0, 0)',
+      },
     },
   }],
   fix: true,
@@ -90,11 +96,13 @@ testRule({
   plugins: [plugin],
   ruleName,
   config: [true, {
-    '#FF0000': {
-      syntax: '<color>',
-      replacement: 'foo.$color',
-      uses: {
-        foo: '@foo/bar',
+    values: {
+      '#FF0000': {
+        syntax: '<color>',
+        replacement: 'foo.$color',
+        uses: {
+          foo: '@foo/bar',
+        },
       },
     },
   }],

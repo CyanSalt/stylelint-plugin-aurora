@@ -11,8 +11,9 @@ export function getRuleName(url: string) {
   return `aurora/${getBasename(url)}`
 }
 
-export function getRuleMeta(url: string): RuleMeta {
+export function getRuleMeta(url: string, meta?: Omit<RuleMeta, 'url'>): RuleMeta {
   return {
     url: `https://github.com/CyanSalt/stylelint-plugin-aurora/blob/master/docs/rules/${getBasename(url)}.md`,
+    ...meta,
   }
 }

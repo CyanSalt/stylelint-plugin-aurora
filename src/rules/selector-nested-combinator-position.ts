@@ -8,7 +8,9 @@ const {
 } = stylelint
 
 export const ruleName = getRuleName(import.meta.url)
-export const meta = getRuleMeta(import.meta.url)
+export const meta = getRuleMeta(import.meta.url, {
+  fixable: true,
+})
 
 export const messages = ruleMessages(ruleName, {
   expected: (combinator: string) => `Expected combinator "${combinator}" to be in the nested form`,
@@ -47,7 +49,7 @@ const ruleImplementation: Rule = (
       if (expectation === 'as-prefix') {
         const detectedCombinator = combinators.find(combinator => rule.selector.endsWith(combinator))
         if (detectedCombinator) {
-          if (context.fix) {
+          const fix = () => {
             rule.each(child => {
               if (child.type === 'rule') {
                 child.selector = child.selector
@@ -66,14 +68,17 @@ const ruleImplementation: Rule = (
               })
               parent.removeChild(rule)
             }
-            return
           }
-          report({
-            ruleName,
-            result,
-            node: rule,
-            message: messages.expected(detectedCombinator),
-          })
+          if (context.fix) {
+            fix()
+          } else {
+            report({
+              ruleName,
+              result,
+              node: rule,
+              message: messages.expected(detectedCombinator),
+            })
+          }
         }
       }
     })

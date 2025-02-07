@@ -10,7 +10,9 @@ const {
 } = stylelint
 
 export const ruleName = getRuleName(import.meta.url)
-export const meta = getRuleMeta(import.meta.url)
+export const meta = getRuleMeta(import.meta.url, {
+  fixable: true,
+})
 
 export const messages = ruleMessages(ruleName, {
   rejected: (matched: string) => `Unexpected magic value "${matched}"`,
@@ -143,7 +145,7 @@ function insertBefore(root: Root, node: ChildNode | undefined, props: Parameters
 
 const ruleImplementation: Rule = (
   expectation: true,
-  options: Record<string, true | string | MatcherOptions>,
+  options: { values?: Record<string, true | string | MatcherOptions> },
   context,
 ) => {
   return (root, result) => {
@@ -156,16 +158,20 @@ const ruleImplementation: Rule = (
       },
       {
         actual: options,
-        possible: value => {
-          return typeof value === 'object'
-            && value !== null
+        possible: {
+          values: [
+            value => {
+              return typeof value === 'object'
+                && value !== null
+            },
+          ],
         },
         optional: true,
       },
     )
     if (!validOptions) return
 
-    const matchers = Object.entries(options)
+    const matchers = Object.entries(options.values ?? {})
       .filter(([key, config]) => config)
       .map(([key, config]) => {
         const opts = normalizeMatcherOptions(config)
@@ -179,12 +185,11 @@ const ruleImplementation: Rule = (
       ? root.nodes.find(node => !isSCSSUseRule(node))
       : root.nodes[0]
     root.walkDecls(decl => {
-      let value = decl.value
       for (const matcher of matchers) {
-        const matched = matcher.test(value)
+        const matched = matcher.test(decl.value)
         if (matched.length) {
-          if (context.fix && matcher.replace) {
-            decl.value = matcher.replace(value, matched)
+          const fix = matcher.replace ? () => {
+            decl.value = matcher.replace!(decl.value, matched)
             if (matcher.options.uses) {
               const diff = diffObjects(uses, matcher.options.uses)
               Object.entries(diff).forEach(([alias, source]) => {
@@ -195,14 +200,17 @@ const ruleImplementation: Rule = (
                 uses[alias] = source
               })
             }
-            continue
+          } : undefined
+          if (context.fix && fix) {
+            fix()
+          } else {
+            report({
+              result,
+              ruleName,
+              message: messages.rejected(matched[0]),
+              node: decl,
+            })
           }
-          report({
-            result,
-            ruleName,
-            message: messages.rejected(matched[0]),
-            node: decl,
-          })
         }
       }
     })

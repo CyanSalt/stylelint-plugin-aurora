@@ -8,8 +8,7 @@ This rule is fixable.
 
 This rule has an object option:
 
-- The key represents the magic value that needs to be reported
-- The value can be in any of the following formats：
+- `values`: an object that contains magic values. The key represents the magic value that needs to be reported while the value can be in any of the following formats：
     - `true` means report only
     - A string representing the replacement
     - An object with:
@@ -20,14 +19,14 @@ This rule has an object option:
 ## Fail
 
 ```scss
-/* stylelint aurora/declaration-property-value-no-magic: [true, { "bold": "bolder" }] */
+/* stylelint aurora/declaration-property-value-no-magic: [true, { "values": { "bold": "bolder" } }] */
 .foo {
   font-weight: bold;
 }
 ```
 
 ```scss
-/* stylelint aurora/declaration-property-value-no-magic: [true, { "#FF0000": { "syntax": "<color>" } }] */
+/* stylelint aurora/declaration-property-value-no-magic: [true, { "values": { "#FF0000": { "syntax": "<color>" } } }] */
 .foo {
   color: rgb(255, 0, 0);
 }
@@ -36,14 +35,14 @@ This rule has an object option:
 ## Pass
 
 ```scss
-/* stylelint aurora/declaration-property-value-no-magic: [true, { "bold": "bolder" }] */
+/* stylelint aurora/declaration-property-value-no-magic: [true, { "values": { "bold": "bolder" } }] */
 .foo {
   font-weight: 700;
 }
 ```
 
 ```scss
-/* stylelint aurora/declaration-property-value-no-magic: [true, { "#FF0000": { "syntax": "<color>" } }] */
+/* stylelint aurora/declaration-property-value-no-magic: [true, { "values": { "#FF0000": { "syntax": "<color>" } } }] */
 #FF0000 {
   color: red;
 }
