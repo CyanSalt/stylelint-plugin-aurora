@@ -144,8 +144,8 @@ function insertBefore(root: Root, node: ChildNode | undefined, props: Parameters
 }
 
 const ruleImplementation: Rule = (
-  expectation: true,
-  options: { values?: Record<string, true | string | MatcherOptions> },
+  values: Record<string, true | string | MatcherOptions>,
+  options,
   context,
 ) => {
   return (root, result) => {
@@ -153,25 +153,18 @@ const ruleImplementation: Rule = (
       result,
       ruleName,
       {
-        actual: expectation,
-        possible: [true],
-      },
-      {
-        actual: options,
-        possible: {
-          values: [
-            value => {
-              return typeof value === 'object'
-                && value !== null
-            },
-          ],
-        },
-        optional: true,
+        actual: values,
+        possible: [
+          value => {
+            return typeof value === 'object'
+              && value !== null
+          },
+        ],
       },
     )
     if (!validOptions) return
 
-    const matchers = Object.entries(options.values ?? {})
+    const matchers = Object.entries(values)
       .filter(([key, config]) => config)
       .map(([key, config]) => {
         const opts = normalizeMatcherOptions(config)

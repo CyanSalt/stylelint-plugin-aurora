@@ -4,10 +4,8 @@ import plugin, { messages, ruleName } from '../../src/rules/declaration-property
 testRule({
   plugins: [plugin],
   ruleName,
-  config: [true, {
-    values: {
-      bold: 'bolder',
-    },
+  config: [{
+    bold: 'bolder',
   }],
   fix: true,
   accept: [
@@ -37,12 +35,10 @@ testRule({
 testRule({
   plugins: [plugin],
   ruleName,
-  config: [true, {
-    values: {
-      '#FF0000': {
-        syntax: '<color>',
-        replacement: 'black',
-      },
+  config: [{
+    '#FF0000': {
+      syntax: '<color>',
+      replacement: 'black',
     },
   }],
   fix: true,
@@ -75,12 +71,10 @@ testRule({
 testRule({
   plugins: [plugin],
   ruleName,
-  config: [true, {
-    values: {
-      '#FF0000': {
-        syntax: '<color>',
-        replacement: 'rgb(255, 0, 0)',
-      },
+  config: [{
+    '#FF0000': {
+      syntax: '<color>',
+      replacement: 'rgb(255, 0, 0)',
     },
   }],
   fix: true,
@@ -95,14 +89,12 @@ testRule({
 testRule({
   plugins: [plugin],
   ruleName,
-  config: [true, {
-    values: {
-      '#FF0000': {
-        syntax: '<color>',
-        replacement: 'foo.$color',
-        uses: {
-          foo: '@foo/bar',
-        },
+  config: [{
+    '#FF0000': {
+      syntax: '<color>',
+      replacement: 'foo.$color',
+      uses: {
+        foo: '@foo/bar',
       },
     },
   }],
