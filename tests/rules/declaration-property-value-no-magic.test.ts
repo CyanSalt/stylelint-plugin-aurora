@@ -48,6 +48,10 @@ testRule({
       description: 'not the same value',
     },
     {
+      code: '.foo { color: #FF000000 }',
+      description: 'not the same value',
+    },
+    {
       code: '#FF0000 { color: red }',
       description: 'pattern as selector',
     },

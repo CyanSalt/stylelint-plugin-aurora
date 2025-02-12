@@ -48,7 +48,7 @@ function normalizeMatcherOptions(config: MatcherConfig) {
 
 function extractColors(value: string) {
   // Supports HEX, RGB(A), HSL(A) only
-  const matches = value.match(/#[0-9a-fA-F]{3,6}|rgba?\(.*?\)|hsla?\(.*?\)/g)
+  const matches = value.match(/#[0-9a-fA-F]{3,8}\b|rgba?\(.*?\)|hsla?\(.*?\)/g)
   return matches ? matches as string[] : []
 }
 
