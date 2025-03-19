@@ -121,3 +121,62 @@ testRule({
     },
   ],
 })
+
+testRule({
+  plugins: [plugin],
+  ruleName,
+  config: [{
+    '#FF0000': {
+      prop: '^background',
+      syntax: '<color>',
+      replacement: 'black',
+    },
+  }],
+  fix: true,
+  accept: [
+    {
+      code: '.foo { color: #FF0000 }',
+      description: 'prop not matched',
+    },
+  ],
+  reject: [
+    {
+      code: '.foo { background-color: #FF0000 }',
+      description: 'prop matched',
+      fixed: '.foo { background-color: black }',
+      message: messages.rejected('#FF0000'),
+    },
+  ],
+})
+
+testRule({
+  plugins: [plugin],
+  ruleName,
+  config: [{
+    'Comic Sans': {
+      syntax: '<family-name>',
+      replacement: 'sans-serif',
+    },
+  }],
+  fix: true,
+  accept: [
+    {
+      code: '.foo { grid-template-areas: "Not Comic Sans" }',
+      description: 'not the same value',
+    },
+  ],
+  reject: [
+    {
+      code: '.foo { font-family: Comic Sans }',
+      description: 'used directly',
+      fixed: '.foo { font-family: sans-serif }',
+      message: messages.rejected('Comic Sans'),
+    },
+    {
+      code: '.foo { font-family: "Comic Sans", monospace }',
+      description: 'used in list',
+      fixed: '.foo { font-family: sans-serif, monospace }',
+      message: messages.rejected('"Comic Sans"'),
+    },
+  ],
+})

@@ -1,5 +1,7 @@
 import path from 'path'
 import { colord } from 'colord'
+import MagicString from 'magic-string'
+import valueParser from 'postcss-value-parser'
 import type { Rule } from 'stylelint'
 import stylelint from 'stylelint'
 import { getRuleMeta, getRuleName } from '../utils.js'
@@ -28,7 +30,8 @@ function escapeRegExp(input: string) {
 type UseDeclarations = Record<string, string>
 
 interface MatcherOptions {
-  syntax?: '<color>' | string & {},
+  prop?: string,
+  syntax?: '<color>' | '<family-name>' | string & {},
   replacement?: string,
   uses?: UseDeclarations,
 }
@@ -46,26 +49,72 @@ function normalizeMatcherOptions(config: MatcherConfig) {
   }
 }
 
-function extractColors(value: string) {
-  // Supports HEX, RGB(A), HSL(A) only
-  const matches = value.match(/#[0-9a-fA-F]{3,8}\b|rgba?\(.*?\)|hsla?\(.*?\)/g)
-  return matches ? matches as string[] : []
-}
-
 interface Matcher {
   options: MatcherOptions,
-  test: (input: string) => string[],
+  // Use `test` to fuzzily match all values and `match` to accurately identify ranges
+  test: (input: string) => boolean,
+  // Empty `match` means the full input text matched
+  match?: (parsed: valueParser.ParsedValue) => [number, number][],
   // Empty `replace` means report without fixing
-  replace?: (input: string, matches: string[]) => string,
+  replace?: (part: string) => string,
 }
 
-function createWordRegExpEdge(value: string) {
-  return /\w/.test(value) ? '\\b' : ''
-}
+const WORD_START_REGEXP = /^\w/
+const WORD_END_REGEXP = /\w$/
 
 function createWordRegExp(value: string) {
   const source = escapeRegExp(value)
-  return new RegExp(`${createWordRegExpEdge(value.slice(0, 1))}${source}${createWordRegExpEdge(value.slice(-1))}`, 'gi')
+  return new RegExp(`${
+    WORD_START_REGEXP.test(value) ? '\\b' : ''
+  }${source}${
+    WORD_END_REGEXP.test(value) ? '\\b' : ''
+  }`, 'gi')
+}
+
+const COLOR_REGEXP = /#[0-9a-fA-F]{3,8}\b|rgba?\(.*?\)|hsla?\(.*?\)/
+
+function isColorNode(node: valueParser.Node) {
+  switch (node.type) {
+    case 'word':
+      return node.value.startsWith('#')
+    case 'function':
+      return /(rgb|hsl)a?/.test(node.value)
+    default:
+      return false
+  }
+}
+
+function divideNodes(nodes: valueParser.Node[]) {
+  const groups: valueParser.Node[][] = []
+  let currentGroup: valueParser.Node[] = []
+  for (const node of nodes) {
+    if (node.type === 'div') {
+      groups.push(currentGroup)
+      currentGroup = []
+    } else {
+      currentGroup.push(node)
+    }
+  }
+  groups.push(currentGroup)
+  return groups
+}
+
+interface FamilyName {
+  value: string,
+  sourceIndex: number,
+  sourceEndIndex: number,
+}
+
+function getFamilyNames(parsed: valueParser.ParsedValue): FamilyName[] {
+  return divideNodes(parsed.nodes).filter(group => group.length).map(group => {
+    return {
+      value: valueParser.stringify(group, node => {
+        return node.type === 'string' ? node.value : undefined
+      }),
+      sourceIndex: group[0].sourceIndex,
+      sourceEndIndex: group[group.length - 1].sourceEndIndex,
+    }
+  })
 }
 
 function createMatcher(value: string, options: MatcherOptions): Matcher {
@@ -75,36 +124,64 @@ function createMatcher(value: string, options: MatcherOptions): Matcher {
       const specified = colord(value)
       return {
         options,
-        test: (input: string) => {
-          const colors = extractColors(input)
-          if (!colors.length) return []
-          // Skip if color is equivalent to the replacement
-          // for replacing formats with a specified one
-          return colors.filter(color => color !== replacement && specified.isEqual(color))
+        test: input => COLOR_REGEXP.test(input),
+        match: parsed => {
+          let matches: [number, number][] = []
+          parsed.walk(node => {
+            if (!isColorNode(node)) return
+            const source = valueParser.stringify(node)
+            if (source === replacement) return
+            const color = colord(source)
+            if (specified.isEqual(color)) {
+              matches.push([node.sourceIndex, node.sourceEndIndex])
+            }
+          })
+          return matches
         },
-        replace: replacement
-          ? (input: string, matches: string[]) => {
-            return matches.reduce((accumulator, pattern) => {
-              const regexp = createWordRegExp(pattern)
-              return accumulator.replace(regexp, replacement)
-            }, input)
+        replace: replacement ? () => replacement : undefined,
+      }
+    }
+    case '<family-name>': {
+      return {
+        options,
+        test: input => input.includes(value),
+        match: parsed => {
+          let matches: [number, number][] = []
+          for (const name of getFamilyNames(parsed)) {
+            if (name.value === value) {
+              matches.push([name.sourceIndex, name.sourceEndIndex])
+            }
           }
-          : undefined,
+          return matches
+        },
+        replace: replacement ? () => replacement : undefined,
       }
     }
     default: {
       const regexp = createWordRegExp(value)
       return {
         options,
-        test: (input: string) => {
-          return regexp.test(input) ? [value] : []
-        },
+        test: input => regexp.test(input),
         replace: replacement
-          ? (input: string) => input.replace(regexp, replacement)
+          ? input => input.replace(regexp, replacement)
           : undefined,
       }
     }
   }
+}
+
+function executeMatcher(matcher: Matcher, value: string) {
+  const suspected = matcher.test(value)
+  if (!suspected) return []
+  const parsed = valueParser(value)
+  return matcher.match ? matcher.match(parsed) : [[0, value.length] as [number, number]]
+}
+
+const CSS_PROP_REGEXP = /^[a-z-]+$/i
+function matchProp(pattern: string, value: string) {
+  return CSS_PROP_REGEXP.test(pattern)
+    ? pattern.toLowerCase() === value.toLowerCase()
+    : new RegExp(pattern, 'i').test(value)
 }
 
 type Root = Parameters<ReturnType<Rule>>[0]
@@ -143,6 +220,14 @@ function insertBefore(root: Root, node: ChildNode | undefined, props: Parameters
   return node ? root.insertBefore(node, props) : root.append(props)
 }
 
+function replaceRanges(value: string, ranges: [number, number][], replacer: (part: string) => string) {
+  const ms = new MagicString(value)
+  for (const range of ranges) {
+    ms.update(range[0], range[1], replacer(ms.slice(range[0], range[1])))
+  }
+  return ms.toString()
+}
+
 const ruleImplementation: Rule = (
   values: Record<string, true | string | MatcherOptions>,
   options,
@@ -179,31 +264,32 @@ const ruleImplementation: Rule = (
       : root.nodes[0]
     root.walkDecls(decl => {
       for (const matcher of matchers) {
-        const matched = matcher.test(decl.value)
-        if (matched.length) {
-          const fix = matcher.replace ? () => {
-            decl.value = matcher.replace!(decl.value, matched)
-            if (matcher.options.uses) {
-              const diff = diffObjects(uses, matcher.options.uses)
-              Object.entries(diff).forEach(([alias, source]) => {
-                insertBefore(root, startNode, {
-                  name: 'use',
-                  params: `'${source}' as ${alias}`,
-                })
-                uses[alias] = source
+        if (matcher.options.prop && !matchProp(matcher.options.prop, decl.prop)) continue
+        const ranges = executeMatcher(matcher, decl.value)
+        if (!ranges.length) continue
+        const replacer = matcher.replace
+        const fix = replacer ? () => {
+          decl.value = replaceRanges(decl.value, ranges, replacer)
+          if (matcher.options.uses) {
+            const diff = diffObjects(uses, matcher.options.uses)
+            Object.entries(diff).forEach(([alias, source]) => {
+              insertBefore(root, startNode, {
+                name: 'use',
+                params: `'${source}' as ${alias}`,
               })
-            }
-          } : undefined
-          if (context.fix && fix) {
-            fix()
-          } else {
-            report({
-              result,
-              ruleName,
-              message: messages.rejected(matched[0]),
-              node: decl,
+              uses[alias] = source
             })
           }
+        } : undefined
+        if (context.fix && fix) {
+          fix()
+        } else {
+          report({
+            result,
+            ruleName,
+            message: messages.rejected(decl.value.slice(...ranges[0])),
+            node: decl,
+          })
         }
       }
     })

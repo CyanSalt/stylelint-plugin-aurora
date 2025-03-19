@@ -12,6 +12,7 @@ This rule has an object option:
     - `true` means report only
     - A string representing the replacement
     - An object with:
+        - `prop` : an optional property name to match. It will be treated as a regular expression if it contains characters other than lowercase letters and hyphens, otherwise a complete and exact match will be performed.
         - `syntax` : other variants of magic value with the syntax will also be reported. `<color>` is supported currently.
         - `replacement` : the value to be replaced in autofix
         - `uses` : additional partials that need to be imported via `@use` after replacing in SCSS. `uses` is declared as an object, e.g. `{ foo: './bar' }` is equivalent to `@use './bar' as foo`
