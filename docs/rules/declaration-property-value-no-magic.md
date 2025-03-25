@@ -16,6 +16,7 @@ This rule has an object option:
         - `syntax` : other variants of magic value with the syntax will also be reported. `<color>` is supported currently.
         - `replacement` : the value to be replaced in autofix
         - `uses` : additional partials that need to be imported via `@use` after replacing in SCSS. `uses` is declared as an object, e.g. `{ foo: './bar' }` is equivalent to `@use './bar' as foo`
+        - `oneOf` : If there are multiple rules for one magic value, you can declare those objects as `oneOf`. The first items in the array will be matched first.
 
 ## Fail
 

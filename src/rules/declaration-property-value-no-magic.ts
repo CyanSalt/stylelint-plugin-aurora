@@ -36,16 +36,24 @@ interface MatcherOptions {
   uses?: UseDeclarations,
 }
 
-type MatcherConfig = true | string | MatcherOptions
+interface GroupedMatcherOptions extends MatcherOptions {
+  oneOf?: MatcherOptions[],
+}
 
-function normalizeMatcherOptions(config: MatcherConfig) {
+type MatcherConfig = true | string | GroupedMatcherOptions
+
+function normalizeMatcherOptions(config: MatcherConfig): MatcherOptions[] {
   switch (typeof config) {
     case 'string':
-      return { replacement: config }
+      return [{ replacement: config }]
     case 'boolean':
-      return {}
-    default:
-      return config
+      return [{}]
+    default: {
+      const { oneOf, ...options } = config
+      return oneOf
+        ? oneOf.map(item => ({ ...options, ...item }))
+        : [options]
+    }
   }
 }
 
@@ -251,10 +259,9 @@ const ruleImplementation: Rule = (
 
     const matchers = Object.entries(values)
       .filter(([key, config]) => config)
-      .map(([key, config]) => {
-        const opts = normalizeMatcherOptions(config)
-        const matcher = createMatcher(key, opts)
-        return matcher
+      .flatMap(([key, config]) => {
+        return normalizeMatcherOptions(config)
+          .map(opts => createMatcher(key, opts))
       })
 
     const useRules = root.nodes.filter(node => isSCSSUseRule(node))
@@ -291,6 +298,7 @@ const ruleImplementation: Rule = (
             node: decl,
           })
         }
+        return
       }
     })
   }

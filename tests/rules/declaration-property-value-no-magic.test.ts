@@ -153,6 +153,40 @@ testRule({
   plugins: [plugin],
   ruleName,
   config: [{
+    '#FF0000': {
+      syntax: '<color>',
+      oneOf: [
+        {
+          prop: '^background',
+          replacement: 'black',
+        },
+        {
+          replacement: 'blue',
+        },
+      ],
+    },
+  }],
+  fix: true,
+  reject: [
+    {
+      code: '.foo { background-color: #FF0000 }',
+      description: 'the first oneOf matched',
+      fixed: '.foo { background-color: black }',
+      message: messages.rejected('#FF0000'),
+    },
+    {
+      code: '.foo { color: #FF0000 }',
+      description: 'the second oneOf matched',
+      fixed: '.foo { color: blue }',
+      message: messages.rejected('#FF0000'),
+    },
+  ],
+})
+
+testRule({
+  plugins: [plugin],
+  ruleName,
+  config: [{
     'Comic Sans': {
       syntax: '<family-name>',
       replacement: 'sans-serif',
