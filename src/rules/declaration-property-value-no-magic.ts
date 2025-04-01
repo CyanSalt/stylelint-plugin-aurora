@@ -236,6 +236,23 @@ function replaceRanges(value: string, ranges: [number, number][], replacer: (par
   return ms.toString()
 }
 
+interface Issue {
+  matcher: Matcher,
+  ranges: [number, number][],
+}
+
+function getMostAccurateFixableIssue(issues: Issue[]) {
+  if (!issues.length) return undefined
+  if (issues.length === 1) return issues[0]
+  const fixableIssues = issues.filter(({ matcher }) => matcher.replace)
+  if (!fixableIssues.length) return undefined
+  if (fixableIssues.length === 1) return fixableIssues[0]
+  const accurateIssues = fixableIssues.filter(({ matcher }) => matcher.options.prop)
+  if (!accurateIssues.length) return undefined
+  if (accurateIssues.length === 1) return accurateIssues[0]
+  return undefined
+}
+
 const ruleImplementation: Rule = (
   values: Record<string, true | string | MatcherOptions>,
   options,
@@ -270,27 +287,34 @@ const ruleImplementation: Rule = (
       ? root.nodes.find(node => !isSCSSUseRule(node))
       : root.nodes[0]
     root.walkDecls(decl => {
+      const issues: Issue[] = []
       for (const matcher of matchers) {
         if (matcher.options.prop && !matchProp(matcher.options.prop, decl.prop)) continue
         const ranges = executeMatcher(matcher, decl.value)
-        if (!ranges.length) continue
-        const replacer = matcher.replace
-        const fix = replacer ? () => {
-          decl.value = replaceRanges(decl.value, ranges, replacer)
-          if (matcher.options.uses) {
-            const diff = diffObjects(uses, matcher.options.uses)
-            Object.entries(diff).forEach(([alias, source]) => {
-              insertBefore(root, startNode, {
-                name: 'use',
-                params: `'${source}' as ${alias}`,
-              })
-              uses[alias] = source
+        if (ranges.length) {
+          issues.push({ matcher, ranges })
+        }
+      }
+      const fixable = getMostAccurateFixableIssue(issues)
+      const replacer = fixable ? fixable.matcher.replace : undefined
+      const fix = replacer ? () => {
+        const { matcher, ranges } = fixable!
+        decl.value = replaceRanges(decl.value, ranges, replacer)
+        if (matcher.options.uses) {
+          const diff = diffObjects(uses, matcher.options.uses)
+          Object.entries(diff).forEach(([alias, source]) => {
+            insertBefore(root, startNode, {
+              name: 'use',
+              params: `'${source}' as ${alias}`,
             })
-          }
-        } : undefined
-        if (context.fix && fix) {
-          fix()
-        } else {
+            uses[alias] = source
+          })
+        }
+      } : undefined
+      if (context.fix && fix) {
+        fix()
+      } else {
+        for (const { ranges } of issues) {
           report({
             result,
             ruleName,
@@ -298,7 +322,6 @@ const ruleImplementation: Rule = (
             node: decl,
           })
         }
-        return
       }
     })
   }

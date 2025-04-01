@@ -172,13 +172,54 @@ testRule({
       code: '.foo { background-color: #FF0000 }',
       description: 'the first oneOf matched',
       fixed: '.foo { background-color: black }',
-      message: messages.rejected('#FF0000'),
+      warnings: [
+        {
+          message: messages.rejected('#FF0000'),
+        },
+        {
+          message: messages.rejected('#FF0000'),
+        },
+      ],
     },
     {
       code: '.foo { color: #FF0000 }',
       description: 'the second oneOf matched',
       fixed: '.foo { color: blue }',
       message: messages.rejected('#FF0000'),
+    },
+  ],
+})
+
+testRule({
+  plugins: [plugin],
+  ruleName,
+  config: [{
+    '#FF0000': {
+      syntax: '<color>',
+      oneOf: [
+        {
+          replacement: 'black',
+        },
+        {
+          replacement: 'blue',
+        },
+      ],
+    },
+  }],
+  fix: true,
+  reject: [
+    {
+      code: '.foo { background-color: #FF0000 }',
+      description: 'unfixable conflict rule fixes',
+      unfixable: true,
+      warnings: [
+        {
+          message: messages.rejected('#FF0000'),
+        },
+        {
+          message: messages.rejected('#FF0000'),
+        },
+      ],
     },
   ],
 })
