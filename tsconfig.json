@@ -1,12 +1,7 @@
 {
-  "extends": "@cyansalt/tsconfig/tsconfig.lib",
-  "compilerOptions": {
-    "noEmit": false,
-    "rootDir": "src",
-    "outDir": "dist",
-    "module": "ESNext"
-  },
-  "include": [
-    "src"
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.lib.json" },
+    { "path": "./tsconfig.node.json" }
   ]
 }

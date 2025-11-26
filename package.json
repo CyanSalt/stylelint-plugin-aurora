@@ -34,7 +34,7 @@
   "license": "ISC",
   "devDependencies": {
     "@cyansalt/eslint-config": "^4.0.0",
-    "@cyansalt/tsconfig": "^2.2.1",
+    "@cyansalt/tsconfig": "^3.0.0",
     "@release-it/conventional-changelog": "^8.0.1",
     "@types/node": "^20.12.12",
     "cross-env": "^7.0.3",
