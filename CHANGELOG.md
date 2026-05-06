@@ -1,4 +1,22 @@
+# Changelog
 
+## [2.1.0](https://github.com/CyanSalt/stylelint-plugin-aurora/compare/v2.0.0...v2.1.0) (2026-05-06)
+
+### Features
+
+* add `declaration-property-value-no-magic` ([ec77636](https://github.com/CyanSalt/stylelint-plugin-aurora/commit/ec77636e2cf68b3b53c56f018dc57a34f0e4b00a))
+* support prop and <family-name> in no-magic ([a65a744](https://github.com/CyanSalt/stylelint-plugin-aurora/commit/a65a7442f4f4dd21bf49a202def9ea9580c76c76))
+
+### Bug Fixes
+
+* conflict fixes ([37a194c](https://github.com/CyanSalt/stylelint-plugin-aurora/commit/37a194c8ac8c008fc7c08e6b78ba79b5baad6bae))
+* match edge ([6c3f748](https://github.com/CyanSalt/stylelint-plugin-aurora/commit/6c3f748d4e8218a3dd776cb0ab263af813580130))
+* object as primary option ([e873d79](https://github.com/CyanSalt/stylelint-plugin-aurora/commit/e873d79229059793ddd4a696a99eeb53e1e914df))
+* option formatting ([8b3cacf](https://github.com/CyanSalt/stylelint-plugin-aurora/commit/8b3cacf78c939c115af8ed460bfccf34ca72aca3))
+* remove deprecated fix flag ([d53dc32](https://github.com/CyanSalt/stylelint-plugin-aurora/commit/d53dc3281378f261a283ae8912600a942f1d059d))
+* support no-magic `oneOf` ([6fee515](https://github.com/CyanSalt/stylelint-plugin-aurora/commit/6fee515bb3ea31dabcb3902bbf4447ac3d96df90))
+* type issue ([0bec3af](https://github.com/CyanSalt/stylelint-plugin-aurora/commit/0bec3afc6b1c5461b28b5cf7f9a1804c19cbddc4))
+* update deps ([68c2707](https://github.com/CyanSalt/stylelint-plugin-aurora/commit/68c270737bef18269c0e1320c5fb200d0714f8eb))
 
 ## [2.0.0](https://github.com/CyanSalt/stylelint-plugin-aurora/compare/v1.0.4...v2.0.0) (2024-05-20)
 
