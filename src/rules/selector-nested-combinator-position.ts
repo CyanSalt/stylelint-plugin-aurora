@@ -69,16 +69,13 @@ const ruleImplementation: Rule = (
               parent.removeChild(rule)
             }
           }
-          if (context.fix) {
-            fix()
-          } else {
-            report({
-              ruleName,
-              result,
-              node: rule,
-              message: messages.expected(detectedCombinator),
-            })
-          }
+          report({
+            ruleName,
+            result,
+            node: rule,
+            message: messages.expected(detectedCombinator),
+            fix,
+          })
         }
       }
     })

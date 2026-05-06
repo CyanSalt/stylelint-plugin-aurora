@@ -231,7 +231,11 @@ function insertBefore(root: Root, node: ChildNode | undefined, props: Parameters
 function replaceRanges(value: string, ranges: [number, number][], replacer: (part: string) => string) {
   const ms = new MagicString(value)
   for (const range of ranges) {
-    ms.update(range[0], range[1], replacer(ms.slice(range[0], range[1])))
+    try {
+      ms.update(range[0], range[1], replacer(ms.slice(range[0], range[1])))
+    } catch {
+      // ignore
+    }
   }
   return ms.toString()
 }
@@ -311,17 +315,14 @@ const ruleImplementation: Rule = (
           })
         }
       } : undefined
-      if (context.fix && fix) {
-        fix()
-      } else {
-        for (const { ranges } of issues) {
-          report({
-            result,
-            ruleName,
-            message: messages.rejected(decl.value.slice(...ranges[0])),
-            node: decl,
-          })
-        }
+      for (const { ranges } of issues) {
+        report({
+          result,
+          ruleName,
+          message: messages.rejected(decl.value.slice(...ranges[0])),
+          node: decl,
+          fix,
+        })
       }
     })
   }
